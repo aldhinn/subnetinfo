@@ -1,6 +1,6 @@
 pub struct IPv4Address {
     pub address: (u8, u8, u8, u8),
-    pub subnet_mask: u8,
+    pub subnet_mask_bits: u8,
 }
 
 impl IPv4Address {
@@ -18,7 +18,7 @@ impl IPv4Address {
 
         let mut address = IPv4Address {
             address: (0, 0, 0, 0),
-            subnet_mask: 0,
+            subnet_mask_bits: 0,
         };
 
         // Calling unwrap should be okay as we are working with a
@@ -42,7 +42,7 @@ impl IPv4Address {
 
         // There are only 32 bits in four octets, therefore the
         // ipv4 subnet bask should only be up until 32 bits.
-        address.subnet_mask = match subnet_mask.trim_end().parse() {
+        address.subnet_mask_bits = match subnet_mask.trim_end().parse() {
             Ok(value) if value <= 32 => value,
             _ => return None,
         };
