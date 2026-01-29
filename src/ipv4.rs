@@ -1,6 +1,6 @@
 pub struct IPv4Address {
-    address: (u8, u8, u8, u8),
-    subnet_mask: u8,
+    pub address: (u8, u8, u8, u8),
+    pub subnet_mask: u8,
 }
 
 impl IPv4Address {
