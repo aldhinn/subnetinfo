@@ -1,6 +1,7 @@
 pub struct IPv4Address {
     pub address: (u8, u8, u8, u8),
     pub cidr_bits: u8,
+    pub subnet_mask: (u8, u8, u8, u8),
 }
 
 impl IPv4Address {
@@ -19,6 +20,7 @@ impl IPv4Address {
         let mut address = IPv4Address {
             address: (0, 0, 0, 0),
             cidr_bits: 0,
+            subnet_mask: (0, 0, 0, 0),
         };
 
         // Calling unwrap should be okay as we are working with a
@@ -47,6 +49,22 @@ impl IPv4Address {
             _ => return None,
         };
 
+        let mut mask = if address.cidr_bits == 0 {
+            0
+        } else {
+            (!0u32) << (32 - address.cidr_bits)
+        };
+        address.subnet_mask.3 = mask as u8 & 0xFF;
+
+        mask = mask >> 8;
+        address.subnet_mask.2 = mask as u8 & 0xFF;
+
+        mask = mask >> 8;
+        address.subnet_mask.1 = mask as u8 & 0xFF;
+
+        mask = mask >> 8;
+        address.subnet_mask.0 = mask as u8 & 0xFF;
+
         Some(address)
     }
 }
@@ -54,6 +72,21 @@ impl IPv4Address {
 #[cfg(test)]
 mod tests {
     use super::IPv4Address;
+
+    #[test]
+    fn subnet_mask_parsing() {
+        let addr = IPv4Address::parse_ip("1.2.1.3/24");
+        assert!(addr.is_some());
+        assert_eq!(addr.unwrap().subnet_mask, (255, 255, 255, 0));
+
+        let addr = IPv4Address::parse_ip("1.2.1.3/15");
+        assert!(addr.is_some());
+        assert_eq!(addr.unwrap().subnet_mask, (255, 254, 0, 0));
+
+        let addr = IPv4Address::parse_ip("1.2.1.3/27");
+        assert!(addr.is_some());
+        assert_eq!(addr.unwrap().subnet_mask, (255, 255, 255, 224));
+    }
 
     #[test]
     fn ip_is_parsed_only_if_octets_are_valid() {
