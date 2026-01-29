@@ -10,7 +10,7 @@ impl IPv4Address {
             return None;
         }
 
-        let subnet_mask: &str = addr_subnet_mask_vec[1];
+        let subnet_mask_bits: &str = addr_subnet_mask_vec[1];
         let octets: Vec<&str> = addr_subnet_mask_vec[0].split('.').collect();
         if octets.len() != 4 {
             return None;
@@ -42,7 +42,7 @@ impl IPv4Address {
 
         // There are only 32 bits in four octets, therefore the
         // ipv4 subnet bask should only be up until 32 bits.
-        address.subnet_mask_bits = match subnet_mask.trim_end().parse() {
+        address.subnet_mask_bits = match subnet_mask_bits.trim_end().parse() {
             Ok(value) if value <= 32 => value,
             _ => return None,
         };
