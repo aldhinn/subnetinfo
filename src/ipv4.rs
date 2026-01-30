@@ -1,9 +1,9 @@
 use std::{io::ErrorKind, str::FromStr};
 
 pub struct IPv4Address {
-    pub address: (u8, u8, u8, u8),
-    pub cidr_bits: u8,
-    pub subnet_mask: (u8, u8, u8, u8),
+    address: (u8, u8, u8, u8),
+    cidr_bits: u8,
+    subnet_mask: (u8, u8, u8, u8),
 }
 
 impl FromStr for IPv4Address {
