@@ -91,6 +91,40 @@ impl FromStr for IPv4Address {
     }
 }
 
+impl IPv4Address {
+    pub fn info(&self) -> String {
+        format!(
+            "{}\n{}\n{}\n{}\n{}",
+            format!(
+                "=====================================\nHost: {}.{}.{}.{}/{}",
+                self.address.0, self.address.1, self.address.2, self.address.3, self.cidr_bits,
+            ),
+            format!(
+                "=====================================\nIP Address: {}.{}.{}.{}",
+                self.address.0, self.address.1, self.address.2, self.address.3
+            ),
+            format!(
+                "Subnet Mask: {}.{}.{}.{}",
+                self.subnet_mask.0, self.subnet_mask.1, self.subnet_mask.2, self.subnet_mask.3
+            ),
+            format!(
+                "Network Address: {}.{}.{}.{}",
+                self.network_address.0,
+                self.network_address.1,
+                self.network_address.2,
+                self.network_address.3,
+            ),
+            format!(
+                "Broadcast Address: {}.{}.{}.{}",
+                self.broadcast_address.0,
+                self.broadcast_address.1,
+                self.broadcast_address.2,
+                self.broadcast_address.3,
+            )
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::IPv4Address;
