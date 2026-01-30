@@ -4,6 +4,7 @@ pub struct IPv4Address {
     address: (u8, u8, u8, u8),
     cidr_bits: u8,
     subnet_mask: (u8, u8, u8, u8),
+    network_address: (u8, u8, u8, u8),
 }
 
 impl FromStr for IPv4Address {
@@ -25,6 +26,7 @@ impl FromStr for IPv4Address {
             address: (0, 0, 0, 0),
             cidr_bits: 0,
             subnet_mask: (0, 0, 0, 0),
+            network_address: (0, 0, 0, 0),
         };
 
         // Calling unwrap should be okay as we are working with a
@@ -69,6 +71,13 @@ impl FromStr for IPv4Address {
         mask = mask >> 8;
         address.subnet_mask.0 = mask as u8 & 0xFF;
 
+        address.network_address = (
+            address.address.0 & address.subnet_mask.0,
+            address.address.1 & address.subnet_mask.1,
+            address.address.2 & address.subnet_mask.2,
+            address.address.3 & address.subnet_mask.3,
+        );
+
         Ok(address)
     }
 }
@@ -94,6 +103,21 @@ mod tests {
         let addr = "1.2.1.3/0".parse::<IPv4Address>();
         assert!(addr.is_ok());
         assert_eq!(addr.unwrap().subnet_mask, (0, 0, 0, 0));
+    }
+
+    #[test]
+    fn network_address_calculation() {
+        let addr = "1.2.1.3/28".parse::<IPv4Address>();
+        assert!(addr.is_ok());
+        assert_eq!(addr.unwrap().network_address, (1, 2, 1, 0));
+
+        let addr = "1.2.1.15/28".parse::<IPv4Address>();
+        assert!(addr.is_ok());
+        assert_eq!(addr.unwrap().network_address, (1, 2, 1, 0));
+
+        let addr = "1.2.1.31/28".parse::<IPv4Address>();
+        assert!(addr.is_ok());
+        assert_eq!(addr.unwrap().network_address, (1, 2, 1, 16));
     }
 
     #[test]
