@@ -6,8 +6,7 @@ fn main() {
     let mut empty_args = true;
 
     for arg in argv.iter() {
-        let ipv4_parse_res = arg.parse::<IPv4Address>();
-        if let Ok(addr) = ipv4_parse_res {
+        if let Ok(addr) = arg.parse::<IPv4Address>() {
             empty_args = false;
             println!("{}", addr.info())
         }
