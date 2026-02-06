@@ -6,6 +6,7 @@ pub struct IPv4Address {
     subnet_mask: (u8, u8, u8, u8),
     network_address: (u8, u8, u8, u8),
     broadcast_address: (u8, u8, u8, u8),
+    info: String,
 }
 
 impl FromStr for IPv4Address {
@@ -29,6 +30,7 @@ impl FromStr for IPv4Address {
             subnet_mask: (0, 0, 0, 0),
             network_address: (0, 0, 0, 0),
             broadcast_address: (0, 0, 0, 0),
+            info: String::new(),
         };
 
         // Calling unwrap should be okay as we are working with a
@@ -87,41 +89,50 @@ impl FromStr for IPv4Address {
             address.network_address.3 | !address.subnet_mask.3,
         );
 
+        address.info = format!(
+            "{}\n{}\n{}\n{}\n{}",
+            format!(
+                "=====================================\nHost: {}.{}.{}.{}/{}",
+                address.address.0,
+                address.address.1,
+                address.address.2,
+                address.address.3,
+                address.cidr_bits,
+            ),
+            format!(
+                "=====================================\nIP Address: {}.{}.{}.{}",
+                address.address.0, address.address.1, address.address.2, address.address.3
+            ),
+            format!(
+                "Subnet Mask: {}.{}.{}.{}",
+                address.subnet_mask.0,
+                address.subnet_mask.1,
+                address.subnet_mask.2,
+                address.subnet_mask.3
+            ),
+            format!(
+                "Network Address: {}.{}.{}.{}",
+                address.network_address.0,
+                address.network_address.1,
+                address.network_address.2,
+                address.network_address.3,
+            ),
+            format!(
+                "Broadcast Address: {}.{}.{}.{}",
+                address.broadcast_address.0,
+                address.broadcast_address.1,
+                address.broadcast_address.2,
+                address.broadcast_address.3,
+            )
+        );
+
         Ok(address)
     }
 }
 
 impl IPv4Address {
-    pub fn info(&self) -> String {
-        format!(
-            "{}\n{}\n{}\n{}\n{}",
-            format!(
-                "=====================================\nHost: {}.{}.{}.{}/{}",
-                self.address.0, self.address.1, self.address.2, self.address.3, self.cidr_bits,
-            ),
-            format!(
-                "=====================================\nIP Address: {}.{}.{}.{}",
-                self.address.0, self.address.1, self.address.2, self.address.3
-            ),
-            format!(
-                "Subnet Mask: {}.{}.{}.{}",
-                self.subnet_mask.0, self.subnet_mask.1, self.subnet_mask.2, self.subnet_mask.3
-            ),
-            format!(
-                "Network Address: {}.{}.{}.{}",
-                self.network_address.0,
-                self.network_address.1,
-                self.network_address.2,
-                self.network_address.3,
-            ),
-            format!(
-                "Broadcast Address: {}.{}.{}.{}",
-                self.broadcast_address.0,
-                self.broadcast_address.1,
-                self.broadcast_address.2,
-                self.broadcast_address.3,
-            )
-        )
+    pub fn info(&self) -> &str {
+        &self.info
     }
 }
 
